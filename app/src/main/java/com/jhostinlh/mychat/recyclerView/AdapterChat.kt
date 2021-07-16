@@ -6,7 +6,6 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import com.google.firebase.auth.FirebaseUser
 import com.jhostinlh.mychat.R
 import com.jhostinlh.mychat.modelo.Mensaje
 import org.threeten.bp.Instant
@@ -14,8 +13,11 @@ import org.threeten.bp.LocalDateTime
 import org.threeten.bp.ZoneId
 import org.threeten.bp.format.DateTimeFormatter
 
-class AdapterChat constructor(val arraylistPersonas: ArrayList<Mensaje>): RecyclerView.Adapter<AdapterChat.Holder>() {
-
+class AdapterChat constructor(val lista: ArrayList<Mensaje>): RecyclerView.Adapter<AdapterChat.Holder>() {
+    var arraylistMensajes: ArrayList<Mensaje>
+    init {
+        arraylistMensajes = lista
+    }
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): Holder {
         val view =  LayoutInflater.from(parent.context).inflate(R.layout.item_chat,parent,false)
         return Holder(view)
@@ -23,13 +25,13 @@ class AdapterChat constructor(val arraylistPersonas: ArrayList<Mensaje>): Recycl
 
     override fun onBindViewHolder(holder: Holder, position: Int) {
         holder.imgPerfil.setImageResource(R.drawable.usuario)
-        holder.txtFecha.text = getdateformatted(arraylistPersonas.get(position).fecha,"HH:mm")
-        holder.textMensaje.text = arraylistPersonas.get(position).mensaje
-        holder.txtNombre.text = arraylistPersonas.get(position).nombre
+        holder.txtFecha.text = getdateformatted(arraylistMensajes.get(position).fecha,"HH:mm")
+        holder.textMensaje.text = arraylistMensajes.get(position).mensaje
+        holder.txtNombre.text = arraylistMensajes.get(position).nombre
     }
 
     override fun getItemCount(): Int {
-        return arraylistPersonas.size
+        return arraylistMensajes.size
     }
 
 
@@ -45,6 +47,11 @@ class AdapterChat constructor(val arraylistPersonas: ArrayList<Mensaje>): Recycl
         val date = LocalDateTime.ofInstant(instant, ZoneId.systemDefault())
         var auxdateTimeFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern(pattern)
         return date.format(auxdateTimeFormatter)
+    }
+    fun setLista(lista: ArrayList<Mensaje>){
+        arraylistMensajes = lista
+
+        notifyDataSetChanged()
     }
 
 }

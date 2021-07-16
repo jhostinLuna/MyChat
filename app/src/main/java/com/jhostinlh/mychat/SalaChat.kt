@@ -46,22 +46,7 @@ class SalaChat : AppCompatActivity() {
         AndroidThreeTen.init(this)
         adapterRecyclerChat = AdapterChat(arrayListMensaje)
 
-        if (arrayListMensaje.isEmpty()){
-            val scope = CoroutineScope(Dispatchers.Main)
-            scope.launch {
-                val a = withContext(Dispatchers.IO){
-                    firebaseCchat.get().addOnSuccessListener {
-                        for (value: DataSnapshot in it.children){
-                            value.getValue(Mensaje::class.java)?.let { arrayListMensaje.add(it) }
-                        }
-                        Log.i("arrayMensajes", "tengo: " + arrayListMensaje.toString())
-                    }
-                }
 
-            }
-
-
-        }
 
     }
 
@@ -70,55 +55,30 @@ class SalaChat : AppCompatActivity() {
 
         val adapterRecyclerChat = AdapterChat(arrayListMensaje)
         recyclerChat.adapter = adapterRecyclerChat
+        /*
+        if (arrayListMensaje.isEmpty()){
+            firebaseCchat.addValueEventListener(object :ValueEventListener{
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    if (snapshot.exists()){
+                        arrayListMensaje.clear()
+                        for (value: DataSnapshot in snapshot.children){
+                            value.getValue(Mensaje::class.java)?.let { arrayListMensaje.add(it) }
+                        }
+                        Log.i("arrayMensajes", "tengo: " + arrayListMensaje.toString())
 
+                        adapterRecyclerChat.setLista(arrayListMensaje)
+                    }
+                }
 
+                override fun onCancelled(error: DatabaseError) {
+                    TODO("Not yet implemented")
+                }
 
-
-
-
-        Log.i("foto",""+user?.photoUrl?.path)
-        binding.imageButtonEnviarMa.setOnClickListener {
-            val horaActual: LocalDateTime = LocalDateTime.now()
-            val zoneDateTime: ZonedDateTime = horaActual.atZone(ZoneId.systemDefault())
-            val dt = zoneDateTime.toInstant().toEpochMilli()
-
-            val msg = Mensaje(user!!.uid,user.displayName,R.drawable.fui_ic_twitter_bird_white_24dp,dt,binding.editTextMensajeSalaChat.text.toString())
-
-            if (binding.editTextMensajeSalaChat.text.toString().isNotEmpty()){
-                enviarMensaje(msg, dt)
-            }else{
-                Toast.makeText(this,"¡Escribe un mensaje antes!",Toast.LENGTH_LONG).show()
-            }
+            })
         }
 
-    }
+         */
 
-    override fun onResume() {
-        super.onResume()
-
-        firebaseCchat.addChildEventListener(object :ChildEventListener{
-            override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
-                snapshot.getValue(Mensaje::class.java)?.let { arrayListMensaje.add(it) }
-                adapterRecyclerChat.notifyDataSetChanged()
-            }
-
-            override fun onChildChanged(snapshot: DataSnapshot, previousChildName: String?) {
-                TODO("Not yet implemented")
-            }
-
-            override fun onChildRemoved(snapshot: DataSnapshot) {
-                TODO("Not yet implemented")
-            }
-
-            override fun onChildMoved(snapshot: DataSnapshot, previousChildName: String?) {
-                TODO("Not yet implemented")
-            }
-
-            override fun onCancelled(error: DatabaseError) {
-                TODO("Not yet implemented")
-            }
-
-        })
         /*
         firebaseCchat.addValueEventListener(object : ValueEventListener{
             override fun onDataChange(snapshot: DataSnapshot) {
@@ -145,6 +105,67 @@ class SalaChat : AppCompatActivity() {
         })
 
          */
+
+
+
+        firebaseCchat.addChildEventListener(object :ChildEventListener{
+            override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
+                snapshot.getValue(Mensaje::class.java)?.let { arrayListMensaje.add(it) }
+                adapterRecyclerChat.notifyDataSetChanged()
+                Log.i("arrayMensajes", "tengo: " + arrayListMensaje.toString())
+            }
+
+            override fun onChildChanged(snapshot: DataSnapshot, previousChildName: String?) {
+                TODO("Not yet implemented")
+            }
+
+            override fun onChildRemoved(snapshot: DataSnapshot) {
+                TODO("Not yet implemented")
+            }
+
+            override fun onChildMoved(snapshot: DataSnapshot, previousChildName: String?) {
+                TODO("Not yet implemented")
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                TODO("Not yet implemented")
+            }
+
+        })
+
+
+
+        Log.i("foto",""+user?.photoUrl?.path)
+        binding.imageButtonEnviarMa.setOnClickListener {
+            val horaActual: LocalDateTime = LocalDateTime.now()
+            val zoneDateTime: ZonedDateTime = horaActual.atZone(ZoneId.systemDefault())
+            val dt = zoneDateTime.toInstant().toEpochMilli()
+
+            val msg = Mensaje(user!!.uid,user.displayName,R.drawable.fui_ic_twitter_bird_white_24dp,dt,binding.editTextMensajeSalaChat.text.toString())
+
+            if (binding.editTextMensajeSalaChat.text.toString().isNotEmpty()){
+                enviarMensaje(msg, dt)
+            }else{
+                Toast.makeText(this,"¡Escribe un mensaje antes!",Toast.LENGTH_LONG).show()
+            }
+        }
+
+    }
+
+    override fun onResume() {
+        super.onResume()
+
+    }
+
+    override fun onPause() {
+        super.onPause()
+        arrayListMensaje.clear()
+    }
+
+    override fun onStop() {
+        super.onStop()
+        arrayListMensaje.clear()
+
     }
 
     fun enviarMensaje(msg: Mensaje, dt: Long){
