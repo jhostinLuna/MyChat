@@ -32,7 +32,7 @@ class Registrar : AppCompatActivity() {
     }
 
     private fun reload() {
-        val intent = Intent(this,SalaChat::class.java)
+        val intent = Intent(this,ElegirGrupo::class.java)
         startActivity(intent)
     }
 

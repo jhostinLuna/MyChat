@@ -31,7 +31,7 @@ class SalaChat : AppCompatActivity() {
     private val fireDatabase: FirebaseDatabase = Firebase.database("https://mychat-ae547-default-rtdb.europe-west1.firebasedatabase.app/")
     private val user: FirebaseUser? = Firebase.auth.currentUser
     private val arrayListMensaje = arrayListOf<Mensaje>()
-    private var firebaseCchat = fireDatabase.reference.child("chat")
+    private lateinit var firebaseCchat: DatabaseReference
     lateinit var adapterRecyclerChat: AdapterChat
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -46,7 +46,7 @@ class SalaChat : AppCompatActivity() {
         AndroidThreeTen.init(this)
         adapterRecyclerChat = AdapterChat(arrayListMensaje)
 
-
+        firebaseCchat = fireDatabase.reference.child(intent.getStringExtra("sala")!!)
 
     }
 
@@ -152,10 +152,7 @@ class SalaChat : AppCompatActivity() {
 
     }
 
-    override fun onResume() {
-        super.onResume()
 
-    }
 
     override fun onPause() {
         super.onPause()
